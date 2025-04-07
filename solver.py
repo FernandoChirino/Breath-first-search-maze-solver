@@ -24,7 +24,7 @@ def generate_maze(x,y):
     for dir_x, dir_y in directions:
         new_x, new_y = x + dir_x, y + dir_y
 
-        if 0 <= new_x < COLS and 0 <= new_y < ROWS and maze[new_y][new_x] == 1:
+        if 0 <= new_x < ROWS and 0 <= new_y < COLS and maze[new_y][new_x] == 1:
             maze[x + dir_x // 2][y + dir_y // 2] = 0 
             generate_maze(new_x, new_y)
 
@@ -41,3 +41,44 @@ def draw_maze():
         for x in range(COLS):
             if maze[y][x] == 1:
                 pygame.draw.rect(screen, BLACK, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+def BFS_visuals(start, end):
+    queque = deque()
+    queque.append(start)
+
+    visited = set()
+    visited.add(start)
+
+    came_from = {}
+
+    while queque:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        current = queque.popleft()
+        x,y = current
+        
+        if current == end:
+            break 
+
+        pygame.draw.rect(screen, GREEN, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+        for dir_x, dir_y in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            new_x, new_y = x + dir_x, y + dir_y
+            neighbor = (new_x, new_y)
+
+            if 0 <= new_x < ROWS and 0 <= new_y < COLS and maze[new_y][new_x] == 0 and (new_x, new_y) not in visited:
+                visited.add(neighbor)
+                queque.append(neighbor)
+                came_from[neighbor] = current
+
+    current = end
+    while current != start:
+        x,y = current
+        pygame.draw.rect(screen, PURPLE, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        pygame.display.flip()
+        clock.tick(FPS)
