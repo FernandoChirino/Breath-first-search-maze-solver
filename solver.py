@@ -5,9 +5,9 @@ from collections import deque
 
 # Setting
 WIDTH, HEIGHT = 800, 800
-ROWS, COLS = 51, 51 
+ROWS, COLS = 53, 53 
 CELL_SIZE = WIDTH // COLS
-FPS = 60
+FPS = 240
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -25,7 +25,7 @@ def generate_maze(x,y):
         new_x, new_y = x + dir_x, y + dir_y
 
         if 0 <= new_x < ROWS and 0 <= new_y < COLS and maze[new_y][new_x] == 1:
-            maze[x + dir_x // 2][y + dir_y // 2] = 0 
+            maze[x + dir_x // 2][y + dir_y // 2] = 0
             generate_maze(new_x, new_y)
 
 start = (1, 1)
@@ -37,10 +37,11 @@ pygame.display.set_caption("Maze Solver")
 clock = pygame.time.Clock()
 
 def draw_maze():
+    screen.fill(BLACK)
     for y in range(ROWS):
         for x in range(COLS):
             if maze[y][x] == 1:
-                pygame.draw.rect(screen, BLACK, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+                pygame.draw.rect(screen, WHITE, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 def BFS_visuals(start, end):
     queque = deque()
@@ -63,7 +64,7 @@ def BFS_visuals(start, end):
         if current == end:
             break 
 
-        pygame.draw.rect(screen, GREEN, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(screen, PURPLE, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -77,8 +78,36 @@ def BFS_visuals(start, end):
                 came_from[neighbor] = current
 
     current = end
-    while current != start:
+    while current != start: 
+
         x,y = current
-        pygame.draw.rect(screen, PURPLE, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(screen, GREEN, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
         pygame.display.flip()
         clock.tick(FPS)
+
+        current = came_from[current]
+        if current == start:
+            break
+
+def main():
+    generate_maze(start[0], start[1])
+    draw_maze()
+    pygame.draw.rect(screen, GREEN, (start[0] * CELL_SIZE, start[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+    pygame.draw.rect(screen, GREEN, (end[0] * CELL_SIZE, end[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+    pygame.display.flip()
+    clock.tick(FPS)
+
+    BFS_visuals(start, end)
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        clock.tick(FPS)   
+
+    pygame.display.flip()
+    pygame.quit()
+    sys.exit() 
+
+main()
