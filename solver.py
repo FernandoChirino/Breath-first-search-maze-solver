@@ -5,9 +5,9 @@ from collections import deque
 
 # Setting
 WIDTH, HEIGHT = 800, 800
-ROWS, COLS = 53, 53 
+ROWS, COLS = 61, 61 
 CELL_SIZE = WIDTH // COLS
-FPS = 500
+FPS = 350  # Controls the speed 
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -24,8 +24,8 @@ def generate_maze(x,y):
     for dir_x, dir_y in directions:
         new_x, new_y = x + dir_x, y + dir_y
 
-        if 0 <= new_x < ROWS and 0 <= new_y < COLS and maze[new_y][new_x] == 1:
-            maze[x + dir_x // 2][y + dir_y // 2] = 0  # Remove wall between current cell and new cell
+        if 0 <= new_x < COLS and 0 <= new_y < ROWS and maze[new_y][new_x] == 1:
+            maze[y + dir_y // 2][x + dir_x // 2] = 0  # Remove wall between current cell and new cell
             generate_maze(new_x, new_y)
 
 start = (1, 1)
