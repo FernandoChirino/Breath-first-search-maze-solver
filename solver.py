@@ -7,7 +7,7 @@ from collections import deque
 WIDTH, HEIGHT = 800, 800
 ROWS, COLS = 53, 53 
 CELL_SIZE = WIDTH // COLS
-FPS = 240
+FPS = 500
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -25,7 +25,7 @@ def generate_maze(x,y):
         new_x, new_y = x + dir_x, y + dir_y
 
         if 0 <= new_x < ROWS and 0 <= new_y < COLS and maze[new_y][new_x] == 1:
-            maze[x + dir_x // 2][y + dir_y // 2] = 0
+            maze[x + dir_x // 2][y + dir_y // 2] = 0  # Remove wall between current cell and new cell
             generate_maze(new_x, new_y)
 
 start = (1, 1)
@@ -40,7 +40,7 @@ def draw_maze():
     screen.fill(BLACK)
     for y in range(ROWS):
         for x in range(COLS):
-            if maze[y][x] == 1:
+            if maze[y][x] == 1:  # Wall 
                 pygame.draw.rect(screen, WHITE, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 def BFS_visuals(start, end):
@@ -58,17 +58,19 @@ def BFS_visuals(start, end):
                 pygame.quit()
                 sys.exit()
 
-        current = queque.popleft()
+        current = queque.popleft() # popleft() removes the first element from the deque. current is a tuple (x,y)
+        #print(current)
         x,y = current
+        #print(x,y)
         
         if current == end:
             break 
 
         pygame.draw.rect(screen, PURPLE, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
-        pygame.display.flip()
+        pygame.display.flip()  # Updates the screen 
         clock.tick(FPS)
 
-        for dir_x, dir_y in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+        for dir_x, dir_y in [(0, 1), (1, 0), (0, -1), (-1, 0)]: # Explore neighbors (up, right, down, left)
             new_x, new_y = x + dir_x, y + dir_y
             neighbor = (new_x, new_y)
 
@@ -85,7 +87,7 @@ def BFS_visuals(start, end):
         pygame.display.flip()
         clock.tick(FPS)
 
-        current = came_from[current]
+        current = came_from[current]  # move to the previous cell in the path
         if current == start:
             break
 
